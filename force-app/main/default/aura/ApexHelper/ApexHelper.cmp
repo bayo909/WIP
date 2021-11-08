@@ -1,0 +1,4 @@
+<aura:component extensible="true"
+  controller="ApexHelperController">
+  {!v.body}
+</aura:component>

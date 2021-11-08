@@ -1,0 +1,28 @@
+public class dynamicMapController {
+    
+    @AuraEnabled
+    public static string getAllOrder(){ 
+        string query = 'select id,Name,GeoLocation__c,Description from account where GeoLocation__longitude__s != null and GeoLocation__latitude__s != null limit 10';
+        string baseUrl = URL.getSalesforceBaseUrl().toExternalForm();
+        system.debug('query ==> '+query);
+        list< map<string,object>> markerList = new list< map<string,object>>();
+        for(Account order : Database.query(query)){          
+            if(order.GeoLocation__c != null){
+
+                map<string,object> markerMap = new map<string,object>();
+                markerMap.put('title', order.name);
+                markerMap.put('description',order.Description != null ? order.Description : '');
+                map<string,object> addressMap = new map<string,object>();
+                addressMap.put('Latitude',order.GeoLocation__c.getLatitude());
+                addressMap.put('Longitude',order.GeoLocation__c.getLongitude());
+                markerMap.put('location',addressMap);
+                markerList.add(markerMap);  
+            }
+        }
+        
+        
+        system.debug('+++++++'+JSON.serialize(markerList));  
+        return JSON.serialize(markerList);  
+        
+    } 
+}
